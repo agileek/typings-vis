@@ -1,0 +1,16 @@
+{
+  "name": "typings-vis",
+  "version": "0.0.0",
+  "description": "A type definition for the visjs library.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agileek/typings-vis.git"
+  },
+  "scripts": {
+    "test": "tsc test.ts"
+  },
+  "devDependencies": {
+    "typescript": "^1.8.10"
+  }
+}
