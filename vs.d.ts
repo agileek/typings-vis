@@ -1,7 +1,8 @@
 // Type definitions for vis.js
 // Project: https://github.com/almende/vis
-// Definitions by: Michaël Bitard <>
-//                 Adrian Caballero at Epic Labs <adrian@epiclabs.io>
+// Definitions by: Adrian Caballero at Epic Labs <adrian@epiclabs.io>
+//                 Michaël Bitard <>
+//                 Pat Sissons  <>
 // Definitions: ---
 
 declare namespace __vis {
