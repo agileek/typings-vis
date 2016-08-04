@@ -233,7 +233,7 @@ declare namespace __vis {
   }
 
   export interface ITimelineStatic {
-      new(id: HTMLElement, data: any, options?: any): Vis.ITimeline;
+      new(id: HTMLElement, data: any, options?: any): __vis.ITimeline;
   }
 
   export interface ITimeline {
@@ -530,24 +530,24 @@ declare namespace __vis {
   }
 
   export interface IOptionsScaling {
-    min?: number,
-    max?: number,
+    min?: number;
+    max?: number;
     label?: boolean | {
         enabled?: boolean,
         min?: number,
         max?: number,
         maxVisible?: number,
         drawThreshold?: number
-    },
-    customScalingFunction?(min?: number, max?: number, total?: number, value?: number): number,
+    };
+    customScalingFunction?(min?: number, max?: number, total?: number, value?: number): number;
   }
 
   export interface IOptionsShadow {
-    enabled: boolean,
-    color: string,
-    size: number,
-    x: number,
-    y: number,
+    enabled: boolean;
+    color: string;
+    size: number;
+    x: number;
+    y: number;
   }
 
   export interface IEvents {
@@ -625,4 +625,9 @@ declare namespace __vis {
 
 declare module 'vis' {
   export = __vis;
+}
+
+declare namespace moment {
+    interface Moment {
+    }
 }
