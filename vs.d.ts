@@ -408,7 +408,7 @@ declare namespace __vis {
     icon?: {
         face?: string,
         code?: string,
-        size?: number,  //50,
+        size?: number,  // 50,
         color?: string,
     };
 
@@ -623,7 +623,7 @@ declare namespace __vis {
   }
 }
 
-declare module 'vis' {
+declare module "vis" {
   export = __vis;
 }
 
