@@ -412,7 +412,7 @@ declare namespace __vis {
      * @memberOf Network
      */
     setSize(width: string, height: string): void;
- 
+
     /**
      * The joinCondition function is presented with all nodes.
      * 
@@ -511,7 +511,7 @@ declare namespace __vis {
      * @memberOf Network
      */
     openCluster(nodeId: string, options?: IOpenClusterOptions): void;
-    
+
     /**
      * If you like the layout of your network
      * and would like it to start in the same way next time,
@@ -614,7 +614,7 @@ declare namespace __vis {
      * @memberOf Network
      */
     storePositions(): void;
-    
+
     /**
      * You can use this to programatically move a node.
      * The supplied x and y positions have to be in canvas space!
@@ -864,7 +864,7 @@ declare namespace __vis {
      * @type {boolean}
      * @memberOf IFocusOptions
      */
-    locked?: boolean,
+    locked?: boolean;
   }
 
   /**
@@ -881,7 +881,7 @@ declare namespace __vis {
      * @type {number} the scale.
      * @memberOf IFocusOptions
      */
-    scale?: number,
+    scale?: number;
 
     /**
      * The offset (in DOM units) is how many pixels from the center the view is focussed.
@@ -890,7 +890,7 @@ declare namespace __vis {
      * @type {IPosition}
      * @memberOf IFocusOptions
      */
-    offset?: IPosition,
+    offset?: IPosition;
 
     /**
     * For animation you can either use a Boolean to use it with the default options or
@@ -934,7 +934,7 @@ declare namespace __vis {
      * @type {number}
      * @memberOf IAnimationOptions
      */
-    duration: number,
+    duration: number;
     /**
      * The easing function.
      * 
@@ -946,7 +946,7 @@ declare namespace __vis {
      * @type {string}
      * @memberOf IAnimationOptions
      */
-    easingFunction: string
+    easingFunction: string;
   }
 
   /**
@@ -963,7 +963,7 @@ declare namespace __vis {
      * @type {string[]}
      * @memberOf IFitOptions
      */
-    nodes?: string[],
+    nodes?: string[];
 
     /**
      * For animation you can either use a Boolean to use it with the default options or
@@ -972,12 +972,12 @@ declare namespace __vis {
      * @type {(IAnimationOptions | boolean)}
      * @memberOf IFitOptions
      */
-    animation: IAnimationOptions | boolean
+    animation: IAnimationOptions | boolean;
   }
 
   export interface ISelectionOptions {
-    unselectAll?: boolean,
-    highlightEdges?: boolean
+    unselectAll?: boolean;
+    highlightEdges?: boolean;
   }
 
   /**
@@ -987,10 +987,10 @@ declare namespace __vis {
    * @interface IBoundingBox
    */
   export interface IBoundingBox {
-      top: number,
-      left: number,
-      right: number,
-      bottom: number
+      top: number;
+      left: number;
+      right: number;
+      bottom: number;
   }
 
   /**
