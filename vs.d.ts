@@ -175,10 +175,340 @@ declare namespace __vis {
     event: Event;
   }
 
-  export class DataSet<T extends DataItem | DataGroup> {
-    constructor(items: Array<T>);
+  /**
+   * Options that can be passed to a DataSet.
+   * 
+   * @interface DataSetOptions
+   */
+  interface DataSetOptions extends DataSetQueueOptions {
+      /**
+       * The name of the field containing the id of the items.
+       * When data is fetched from a server which uses some specific field to identify items,
+       * this field name can be specified in the DataSet using the option fieldId.
+       * For example CouchDB uses the field "_id" to identify documents.
+       * 
+       * @type {string}
+       * @memberOf DataSetOptions
+       */
+      fieldId?: string;
 
+      /**
+       * An object containing field names as key, and data types as value.
+       * By default, the type of the properties of items are left unchanged.
+       * Item properties can be normalized by specifying a field type.
+       * This is useful for example to automatically convert stringified dates coming
+       * from a server into JavaScript Date objects.
+       * The available data types are listed in section Data Types.
+       * 
+       * @type {*}
+       * @memberOf DataSetOptions
+       */
+      type?: any;
+  }
+
+  interface DataSetQueueOptions {      
+      /**
+       * Queue data changes ('add', 'update', 'remove') and flush them at once.
+       * The queue can be flushed manually by calling DataSet.flush(),
+       * or can be flushed after a configured delay or maximum number of entries. 
+       * When queue is true, a queue is created with default options.
+       * Options can be specified by providing an object:
+       * delay: number - The queue will be flushed automatically after an inactivity of this delay in milliseconds. Default value is null.
+       * max: number - When the queue exceeds the given maximum number of entries, the queue is flushed automatically. Default value is Infinity.
+       * 
+       * @type {(any | boolean)}
+       * @memberOf DataSetOptions
+       */
+      queue?: any | boolean;
+  }
+
+  export class DataSet<T extends DataItem | DataGroup | INode | IEdge> {
+
+    /**
+     * Creates an instance of DataSet.
+     * 
+     * @param {Array<T>} [data] An Array with items.
+     * @param {DataSetOptions} [options] DataSet options.
+     * 
+     * @memberOf DataSet
+     */
+    constructor(data?: Array<T>, options?: DataSetOptions);
+
+    /**
+     * The number of items in the DataSet.
+     * 
+     * @type {number}
+     * @memberOf DataSet
+     */
     length: number;
+
+    /**
+     * Add one or multiple items to the DataSet.
+     * Adding an item will fail when there already is an item with the same id.
+     * 
+     * @param {(T | T[])} data data can be a single item or an array with items.
+     * @param {IdType} [senderId] Optional sender id.
+     * @returns {number[]} The function returns an array with the ids of the added items.
+     * 
+     * @memberOf DataSet
+     */
+    add(data: T | T[], senderId?: IdType): number[];
+
+    /**
+     * Clear all data from the DataSet.
+     * 
+     * @param {IdType} [senderId] Optional sender id.
+     * @returns {number[]} The function returns an array with the ids of the removed items.
+     * 
+     * @memberOf DataSet
+     */
+    clear(senderId?: IdType): number[];
+
+    /**
+     * Find all distinct values of a specified field.
+     * If data items do not contain the specified field are ignored.
+     * 
+     * @param {string} field The search term.
+     * @returns {any[]} Returns an unordered array containing all distinct values.
+     * 
+     * @memberOf DataSet
+     */
+    distinct(field: string): any[];
+
+    /**
+     * Flush queued changes.
+     * Only available when the DataSet is configured with the option queue.
+     * 
+     * @memberOf DataSet
+     */
+    flush(): void;
+
+    /**
+     * Execute a callback function for every item in the dataset.
+     * 
+     * @param {(item: T, id: IdType) => void} callback The item callback.
+     * @param {DataSelectionOptions<T>} [options] Optional options
+     * 
+     * @memberOf DataSet
+     */
+    forEach(callback: (item: T, id: IdType) => void, options?: DataSelectionOptions<T>): void;
+
+    /**
+     * Get all items from the DataSet. 
+     * 
+     * @param {DataSelectionOptions<T>} [options] Optional options.
+     * @returns {T[]} When no item is found, null is returned when a single item was requested,
+     * and and empty Array is returned in case of multiple id's.
+     * 
+     * @memberOf DataSet
+     */
+    get(options?: DataSelectionOptions<T>): T[];
+
+    /**
+     * Get a single item from the DataSet. 
+     * 
+     * @param {IdType} id The item id.
+     * @param {DataSelectionOptions<T>} [options]
+     * @returns {T} When no item is found, null is returned when a single item was requested,
+     * and and empty Array is returned in case of multiple id's.
+     * 
+     * @memberOf DataSet
+     */
+    get(id: IdType, options?: DataSelectionOptions<T>): T;
+
+    /**
+     * Get multiple items from the DataSet. 
+     * 
+     * @param {number[] | string[]} ids Array of item ids.
+     * @param {DataSelectionOptions<T>} [options] Optional options.
+     * @returns {T[]} When no item is found, null is returned when a single item was requested,
+     * and and empty Array is returned in case of multiple id's.
+     * 
+     * @memberOf DataSet
+     */
+    get(ids: (number[] | string[]), options?: DataSelectionOptions<T>): T[];
+
+    /**
+     * Get the DataSet itself.
+     * In case of a DataView, this function does not return the DataSet
+     * to which the DataView is connected.
+     * 
+     * @returns {DataSet<T>} The DataSet itself.
+     * 
+     * @memberOf DataSet
+     */
+    getDataSet(): DataSet<T>;
+
+    /**
+     * Get ids of all items or of a filtered set of items.
+     * 
+     * @param {DataSelectionOptions<T>} [options]
+     * @returns {number[]} ids of all items or of a filtered set of items.
+     * 
+     * @memberOf DataSet
+     */
+    getIds(options?: DataSelectionOptions<T>): (number[] | string[]);
+
+    /**
+     * Map every item in the DataSet. 
+     * 
+     * @param {(item: T, id: IdType) => T} callback The mapping callback.
+     * @param {DataSelectionOptions<T>} [options] Optional options.
+     * @returns {T[]} The mapped items.
+     * 
+     * @memberOf DataSet
+     */
+    map(callback: (item: T, id: IdType) => any, options?: DataSelectionOptions<T>): any[];
+
+    /**
+     * Find the item with maximum value of specified field.
+     * 
+     * @param {string} field
+     * @returns {T} Returns null if no item is found.
+     * 
+     * @memberOf DataSet
+     */
+    max(field: string): T;
+
+    /**
+     * Find the item with minimum value of specified field.
+     * 
+     * @param {string} field
+     * @returns {T} Returns null if no item is found.
+     * 
+     * @memberOf DataSet
+     */
+    min(field: string): T;
+
+    /**
+     * Subscribe from an event.
+     * 
+     * @param {string} event The event name.
+     * @param {((event: string, properties: any, senderId: IdType) => void)} callback 
+     * a callback function which will be called each time the event occurs.
+     * 
+     * @memberOf DataSet
+     */
+    on(event: string, callback: (event: string, properties: any, senderId: IdType) => void): void;
+
+    /**
+     * Unsubscribe to an event.
+     * 
+     * @param {string} event The event name.
+     * @param {((event: string, properties: any, senderId: IdType) => void)} callback 
+     * The exact same callback that was used when calling 'on'.
+     * 
+     * @memberOf DataSet
+     */
+    off(event: string, callback: (event: string, properties: any, senderId: IdType) => void): void;
+
+    /**
+     * Remove one by id or by the items themselves. 
+     * 
+     * @param {IdType} id The item id.
+     * @param {IdType} [senderId] The sender id.
+     * @returns {(string[] | number[])} Returns an array with the ids of the removed items.
+     * 
+     * @memberOf DataSet
+     */
+    remove(id: IdType, senderId?: IdType): string[] | number[];
+
+    /**
+     * Remove multiple items by id or by the items themselves.
+     * 
+     * @param {(string[] | number[])} ids The item ids.
+     * @param {IdType} [senderId] The sender id.
+     * @returns {(string[] | number[])} Returns an array with the ids of the removed items.
+     * 
+     * @memberOf DataSet
+     */
+    remove(ids: string[] | number[], senderId?: IdType): string[] | number[];
+
+    /**
+     * Set options for the DataSet.
+     * 
+     * @param {DataSetQueueOptions} [options]
+     * 
+     * @memberOf DataSet
+     */
+    setOptions(options?: DataSetQueueOptions): void;
+
+    /**
+     * Update one or multiple existing items.
+     * When an item doesn't exist, it will be created.
+     * 
+     * @param {(T | T[])} data a single item or an array with items.
+     * @param {IdType} [senderId]
+     * @returns {(string[] | number[])} Returns an array with the ids of the updated items.
+     * 
+     * @memberOf DataSet
+     */
+    update(data: T | T[], senderId?: IdType): string[] | number[];
+  }
+
+  /**
+   * The DataSet contains functionality to format, filter, and sort data retrieved
+   * via the methods get, getIds, forEach, and map.
+   * These methods can have these options as a parameter.
+   * 
+   * @interface DataSelectionOptions
+   */
+  interface DataSelectionOptions<T> {
+      
+      /**
+       * An array with field names, or an object with current field name
+       * and new field name that the field is returned as.
+       * By default, all properties of the items are emitted.
+       * When fields is defined, only the properties whose name is specified
+       * in fields will be included in the returned items.
+       * 
+       * @type {(string[] | any)}
+       * @memberOf DataSelectionOptions
+       */
+      fields?: string[] | any;
+
+      /**
+       * An object containing field names as key, and data types as value.
+       * By default, the type of the properties of an item are left unchanged.
+       * When a field type is specified, this field in the items will be converted to the specified type.
+       * This can be used for example to convert ISO strings containing a date to a JavaScript Date object,
+       * or convert strings to numbers or vice versa. The available data types are listed in section Data Types.
+       * 
+       * @type {*}
+       * @memberOf DataSelectionOptions
+       */
+      type?: any;
+
+      /**
+       * Items can be filtered on specific properties by providing a filter function.
+       * A filter function is executed for each of the items in the DataSet,
+       * and is called with the item as parameter.
+       * The function must return a boolean.
+       * All items for which the filter function returns true will be emitted.
+       * See section Data Filtering.
+       * 
+       * @memberOf DataSelectionOptions
+       */
+      filter?: (item: T) => boolean;
+
+      /**
+       * Order the items by a field name or custom sort function.
+       * 
+       * @type {(string | any)}
+       * @memberOf DataSelectionOptions
+       */
+      order?: string | any;
+
+      /**
+       * Determine the type of output of the get function.
+       * Allowed values are 'Array' | 'Object'.
+       * The default returnType is an Array.
+       * The Object type will return a JSON object with the ID's as keys.
+       * 
+       * @type {string}
+       * @memberOf DataSelectionOptions
+       */
+      returnType?: string;
   }
 
   export class DataView<T extends DataItem | DataGroup> {
