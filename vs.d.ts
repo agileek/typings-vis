@@ -206,7 +206,7 @@ declare namespace __vis {
       type?: any;
   }
 
-  interface DataSetQueueOptions {      
+  interface DataSetQueueOptions {  
       /**
        * Queue data changes ('add', 'update', 'remove') and flush them at once.
        * The queue can be flushed manually by calling DataSet.flush(),
@@ -454,7 +454,6 @@ declare namespace __vis {
    * @interface DataSelectionOptions
    */
   interface DataSelectionOptions<T> {
-      
       /**
        * An array with field names, or an object with current field name
        * and new field name that the field is returned as.
