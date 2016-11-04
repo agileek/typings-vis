@@ -206,7 +206,7 @@ declare namespace __vis {
       type?: any;
   }
 
-  interface DataSetQueueOptions {  
+  interface DataSetQueueOptions {
       /**
        * Queue data changes ('add', 'update', 'remove') and flush them at once.
        * The queue can be flushed manually by calling DataSet.flush(),
