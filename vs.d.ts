@@ -248,21 +248,21 @@ declare namespace __vis {
      * 
      * @param {(T | T[])} data data can be a single item or an array with items.
      * @param {IdType} [senderId] Optional sender id.
-     * @returns {number[]} The function returns an array with the ids of the added items.
+     * @returns {IdType[]} The function returns an array with the ids of the added items.
      * 
      * @memberOf DataSet
      */
-    add(data: T | T[], senderId?: IdType): number[];
+    add(data: T | T[], senderId?: IdType): IdType[];
 
     /**
      * Clear all data from the DataSet.
      * 
      * @param {IdType} [senderId] Optional sender id.
-     * @returns {number[]} The function returns an array with the ids of the removed items.
+     * @returns {IdType[]} The function returns an array with the ids of the removed items.
      * 
      * @memberOf DataSet
      */
-    clear(senderId?: IdType): number[];
+    clear(senderId?: IdType): IdType[];
 
     /**
      * Find all distinct values of a specified field.
@@ -319,14 +319,14 @@ declare namespace __vis {
     /**
      * Get multiple items from the DataSet. 
      * 
-     * @param {number[] | string[]} ids Array of item ids.
+     * @param {IdType[]} ids Array of item ids.
      * @param {DataSelectionOptions<T>} [options] Optional options.
      * @returns {T[]} When no item is found, null is returned when a single item was requested,
      * and and empty Array is returned in case of multiple id's.
      * 
      * @memberOf DataSet
      */
-    get(ids: (number[] | string[]), options?: DataSelectionOptions<T>): T[];
+    get(ids: IdType[], options?: DataSelectionOptions<T>): T[];
 
     /**
      * Get the DataSet itself.
@@ -343,11 +343,11 @@ declare namespace __vis {
      * Get ids of all items or of a filtered set of items.
      * 
      * @param {DataSelectionOptions<T>} [options]
-     * @returns {number[]} ids of all items or of a filtered set of items.
+     * @returns {IdType[]} ids of all items or of a filtered set of items.
      * 
      * @memberOf DataSet
      */
-    getIds(options?: DataSelectionOptions<T>): (number[] | string[]);
+    getIds(options?: DataSelectionOptions<T>): IdType[];
 
     /**
      * Map every item in the DataSet. 
@@ -407,22 +407,22 @@ declare namespace __vis {
      * 
      * @param {IdType} id The item id.
      * @param {IdType} [senderId] The sender id.
-     * @returns {(string[] | number[])} Returns an array with the ids of the removed items.
+     * @returns {IdType[]} Returns an array with the ids of the removed items.
      * 
      * @memberOf DataSet
      */
-    remove(id: IdType, senderId?: IdType): string[] | number[];
+    remove(id: IdType, senderId?: IdType): IdType[];
 
     /**
      * Remove multiple items by id or by the items themselves.
      * 
-     * @param {(string[] | number[])} ids The item ids.
+     * @param {IdType[]} ids The item ids.
      * @param {IdType} [senderId] The sender id.
-     * @returns {(string[] | number[])} Returns an array with the ids of the removed items.
+     * @returns {IdType[]} Returns an array with the ids of the removed items.
      * 
      * @memberOf DataSet
      */
-    remove(ids: string[] | number[], senderId?: IdType): string[] | number[];
+    remove(ids: IdType[], senderId?: IdType): IdType[];
 
     /**
      * Set options for the DataSet.
@@ -439,11 +439,11 @@ declare namespace __vis {
      * 
      * @param {(T | T[])} data a single item or an array with items.
      * @param {IdType} [senderId]
-     * @returns {(string[] | number[])} Returns an array with the ids of the updated items.
+     * @returns {IdType[]} Returns an array with the ids of the updated items.
      * 
      * @memberOf DataSet
      */
-    update(data: T | T[], senderId?: IdType): string[] | number[];
+    update(data: T | T[], senderId?: IdType): IdType[];
   }
 
   /**
@@ -1433,13 +1433,9 @@ declare namespace __vis {
       callback?: (params?: any) => void;
   }
 
-  export interface Dataset {
-
-  }
-
   export interface IData {
-      nodes?: INode[];
-      edges?: IEdge[];
+      nodes?: INode[] | DataSet<INode>;
+      edges?: IEdge[] | DataSet<IEdge>;
   }
 
   export interface INode {
