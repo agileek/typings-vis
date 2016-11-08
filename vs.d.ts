@@ -543,7 +543,7 @@ declare namespace __vis {
     getItemRange(): any; // TODO
     getSelection(): Array<IdType>;
     getVisibleItems(): Array<IdType>;
-    getWindow(): Window;
+    getWindow(): {start: Date, end: Date};
     moveTo(time: DateType, options?: TimelineFitOptions): void;
     on(event: TimelineEvents, callback: Function): void;
     off(event: TimelineEvents, callback: Function): void;
