@@ -1439,7 +1439,7 @@ declare namespace __vis {
   }
 
   export interface INode {
-      id?: string;
+      id?: IdType;
       label?: string;
       x?: number;
       y?: number;
@@ -1449,9 +1449,9 @@ declare namespace __vis {
   }
 
   export interface IEdge {
-      from?: string;
-      to?: string;
-      id?: string;
+      from?: IdType;
+      to?: IdType;
+      id?: IdType;
   }
 
   export interface IOptions {
