@@ -1446,6 +1446,7 @@ declare namespace __vis {
       fixed?: boolean;
       image?: string;
       shape?: string;
+      title?: string;
   }
 
   export interface IEdge {
