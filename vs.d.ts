@@ -22,6 +22,8 @@ declare namespace __vis {
     'rangechange' |
     'rangechanged' |
     'select' |
+    'itemover' |
+    'itemout' |
     'timechange' |
     'timechanged';
 
@@ -44,7 +46,7 @@ declare namespace __vis {
     content: string;
     id: IdType;
     style?: string;
-    subgroup?: SubgroupType;
+    subgroupOrder?: string | Function;
     title?: string;
   }
 
@@ -110,6 +112,7 @@ declare namespace __vis {
     groupTemplate?: Function; // TODO
     height?: HeightWidthType;
     hiddenDates?: any; // TODO
+    horizontalScroll?: boolean;
     itemsAlwaysDraggable?: boolean;
     locale?: string;
     locales?: any; // TODO
@@ -144,6 +147,8 @@ declare namespace __vis {
     throttleRedraw?: number;
     timeAxis?: TimelineTimeAxisOption;
     type?: string;
+    tooltipOnItemUpdateTime?: boolean | { template: (item: any) => any };
+    verticalScroll?: boolean;
     width?: HeightWidthType;
     zoomable?: boolean;
     zoomKey?: string;
@@ -612,6 +617,38 @@ declare namespace __vis {
       fit?(): void;
   }
 
+   type NetworkEvents =
+    'click' |
+    'doubleClick' |
+    'oncontext' |
+    'hold' |
+    'release' |
+    'select' |
+    'selectNode' |
+    'selectEdge' |
+    'deselectNode' |
+    'deselectEdge' |
+    'dragStart' |
+    'dragging' |
+    'dragEnd' |
+    'hoverNode' |
+    'blurNode' |
+    'hoverEdge' |
+    'blurEdge' |
+    'zoom' |
+    'showPopup' |
+    'hidePopup' |
+    'startStabilizing' |
+    'stabilizationProgress' |
+    'stabilizationIterationsDone' |
+    'stabilized' |
+    'resize' |
+    'initRedraw' |
+    'beforeDrawing' |
+    'afterDrawing' |
+    'animationFinished' |
+    'configChange';
+
   /**
    * Network is a visualization to display networks and networks consisting of nodes and edges.
    * The visualization is easy to use and supports custom shapes, styles, colors, sizes, images, and more.
@@ -674,7 +711,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    on(eventName: string, callback: (params?: any) => void): void;
+    on(eventName: NetworkEvents, callback: (params?: any) => void): void;
 
     /**
      * Remove an event listener.
@@ -686,7 +723,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    off(eventName: string, callback?: (params?: any) => void): void;
+    off(eventName: NetworkEvents, callback?: (params?: any) => void): void;
 
     /**
      * Set an event listener only once.
@@ -698,7 +735,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    once(eventName: string, callback: (params?: any) => void): void;
+    once(eventName: NetworkEvents, callback: (params?: any) => void): void;
 
     /**
      * This function converts canvas coordinates to coordinates on the DOM.
@@ -799,33 +836,71 @@ declare namespace __vis {
      * 
      * network.clustering.findNode('fred') will return ['A','B','C','fred'].
      * 
-     * @param {string} nodeId the node id.
-     * @returns {string[]} an array of nodeIds showing where the node is
+     * @param {IdType} nodeId the node id.
+     * @returns {IdType[]} an array of nodeIds showing where the node is
      * 
      * @memberOf Network
      */
-    findNode(nodeId: string): string[];
+    findNode(nodeId: IdType): IdType[];
+
+    /**
+     * Similar to findNode in that it returns all the edge ids that were
+     * created from the provided edge during clustering.
+     * 
+     * @param {IdType} baseEdgeId the base edge id
+     * @returns {IdType[]} an array of edgeIds
+     */
+    getClusteredEdges(baseEdgeId: IdType): IdType[];
+
+    /**
+     * When a clusteredEdgeId is available, this method will return the original
+     * baseEdgeId provided in data.edges ie.
+     * After clustering the 'SelectEdge' event is fired but provides only the clustered edge.
+     * This method can then be used to return the baseEdgeId.
+     * 
+     * @param {IdType} clusteredEdgeId 
+     * @returns {IdType} 
+     */
+    getBaseEdge(clusteredEdgeId: IdType): IdType;
+
+    /**
+     * Visible edges between clustered nodes are not the same edge as the ones provided
+     * in data.edges passed on network creation. With each layer of clustering, copies of
+     * the edges between clusters are created and the previous edges are hidden,
+     * until the cluster is opened. This method takes an edgeId (ie. a base edgeId from data.edges)
+     * and applys the options to it and any edges that were created from it while clustering.
+     * 
+     * @param {IdType} startEdgeId
+     * @param {IEdgeOptions} [options]
+     */
+    updateEdge(startEdgeId: IdType, options?: IEdgeOptions): void;
+
+    /**
+     * Clustered Nodes when created are not contained in the original data.nodes 
+     * passed on network creation. This method updates the cluster node.
+     */
+    updateClusteredNode(clusteredNodeId: IdType, options?: INodeOptions): void;
 
     /**
      * Returns true if the node whose ID has been supplied is a cluster.
      * 
-     * @param {string} nodeId the node id.
+     * @param {IdType} nodeId the node id.
      * @returns {boolean}
      * 
      * @memberOf Network
      */
-    isCluster(nodeId: string): boolean;
+    isCluster(nodeId: IdType): boolean;
 
     /**
      * Returns an array of all nodeIds of the nodes that
      * would be released if you open the cluster.
      * 
-     * @param {string} clusterNodeId the id of the cluster node
-     * @returns {string[]}
+     * @param {IdType} clusterNodeId the id of the cluster node
+     * @returns {IdType[]}
      * 
      * @memberOf Network
      */
-    getNodesInCluster(clusterNodeId: string): string[];
+    getNodesInCluster(clusterNodeId: IdType): IdType[];
 
     /**
      * Opens the cluster, releases the contained nodes and edges,
@@ -834,12 +909,12 @@ declare namespace __vis {
      * releaseFunction, which is a function that can be used to manually
      * position the nodes after the cluster is opened. 
      * 
-     * @param {string} nodeId the node id
+     * @param {IdType} nodeId the node id
      * @param {IOpenClusterOptions} [options] optional open cluster options
      * 
      * @memberOf Network
      */
-    openCluster(nodeId: string, options?: IOpenClusterOptions): void;
+    openCluster(nodeId: IdType, options?: IOpenClusterOptions): void;
 
     /**
      * If you like the layout of your network
@@ -918,12 +993,12 @@ declare namespace __vis {
      * When nothing is supplied, the positions of all nodes are returned.
      * 
      * @param {string[]} nodeIds
-     * @returns {{[nodeId: string]: IPosition}}
+     * @returns {{[nodeId: IdType]: IPosition}}
      * 
      * @memberOf Network
      */
-    getPositions(nodeIds: string[]): {[nodeId: string]: IPosition};
-    getPositions(nodeId: string): IPosition;
+    getPositions(nodeIds: IdType[]): {[nodeId: string]: IPosition};
+    getPositions(nodeId: IdType): IPosition;
     getPositions(): {[nodeId: string]: IPosition};
 
     /**
@@ -948,45 +1023,45 @@ declare namespace __vis {
      * You can use this to programatically move a node.
      * The supplied x and y positions have to be in canvas space!
      * 
-     * @param {string} nodeId the node that will be moved
+     * @param {IdType} nodeId the node that will be moved
      * @param {number} x new canvas space x position
      * @param {number} y new canvas space y position
      * 
      * @memberOf Network
      */
-    moveNode(nodeId: string, x: number, y: number): void;
+    moveNode(nodeId: IdType, x: number, y: number): void;
 
     /**
      * Returns a bounding box for the node including label.
      * 
-     * @param {string} nodeId
+     * @param {IdType} nodeId
      * @returns {IBoundingBox}
      * 
      * @memberOf Network
      */
-    getBoundingBox(nodeId: string): IBoundingBox;
+    getBoundingBox(nodeId: IdType): IBoundingBox;
 
     /**
      * Returns an array of nodeIds of the all the nodes that are directly connected to this node.
      * If you supply an edgeId, vis will first match the id to nodes.
      * If no match is found, it will search in the edgelist and return an array: [fromId, toId].
      * 
-     * @param {string} nodeOrEdgeId a node or edge id
-     * @returns {(string[] | {fromId: string, toId: string}[])}
+     * @param {IdType} nodeOrEdgeId a node or edge id
+     * @returns {(IdType[] | {fromId: IdType, toId: IdType}[])}
      * 
      * @memberOf Network
      */
-    getConnectedNodes(nodeOrEdgeId: string): string[] | {fromId: string, toId: string}[];
+    getConnectedNodes(nodeOrEdgeId: IdType): IdType[] | {fromId: IdType, toId: IdType}[];
 
     /**
      * Returns an array of edgeIds of the edges connected to this node.
      * 
-     * @param {string} nodeId the node id
-     * @returns {string[]}
+     * @param {IdType} nodeId the node id
+     * @returns {IdType[]}
      * 
      * @memberOf Network
      */
-    getConnectedEdges(nodeId: string): string[];
+    getConnectedEdges(nodeId: IdType): IdType[];
 
     /**
      * Start the physics simulation.
@@ -1020,87 +1095,87 @@ declare namespace __vis {
     /**
      * Returns an object with selected nodes and edges ids.
      * 
-     * @returns {{ nodes: string[], edges: string[] }}
+     * @returns {{ nodes: IdType[], edges: IdType[] }}
      * 
      * @memberOf Network
      */
-    getSelection(): { nodes: string[], edges: string[] };
+    getSelection(): { nodes: IdType[], edges: IdType[] };
 
     /**
      * Returns an array of selected node ids like so:
      * [nodeId1, nodeId2, ..].
      * 
-     * @returns {string[]}
+     * @returns {IdType[]}
      * 
      * @memberOf Network
      */
-    getSelectedNodes(): string[];
+    getSelectedNodes(): IdType[];
 
     /**
      * Returns an array of selected edge ids like so:
      * [edgeId1, edgeId2, ..].
      * 
-     * @returns {string[]}
+     * @returns {IdType[]}
      * 
      * @memberOf Network
      */
-    getSelectedEdges(): string[];
+    getSelectedEdges(): IdType[];
 
     /**
      * Returns a nodeId or undefined.
      * The DOM positions are expected to be in pixels from the top left corner of the canvas.
      * 
      * @param {IPosition} position
-     * @returns {string}
+     * @returns {IdType}
      * 
      * @memberOf Network
      */
-    getNodeAt(position: IPosition): string;
+    getNodeAt(position: IPosition): IdType;
 
     /**
      * Returns a edgeId or undefined.
      * The DOM positions are expected to be in pixels from the top left corner of the canvas.
      * 
      * @param {IPosition} position
-     * @returns {string}
+     * @returns {IdType}
      * 
      * @memberOf Network
      */
-    getEdgeAt(position: IPosition): string;
+    getEdgeAt(position: IPosition): IdType;
 
     /**
      * Selects the nodes corresponding to the id's in the input array.
      * If highlightEdges is true or undefined, the neighbouring edges will also be selected.
      * This method unselects all other objects before selecting its own objects. Does not fire events.
      * 
-     * @param {string[]} nodeIds
+     * @param {IdType[]} nodeIds
      * @param {boolean} [highlightEdges]
      * 
      * @memberOf Network
      */
-    selectNodes(nodeIds: string[], highlightEdges?: boolean): void;
+    selectNodes(nodeIds: IdType[], highlightEdges?: boolean): void;
 
     /**
      * Selects the edges corresponding to the id's in the input array.
      * This method unselects all other objects before selecting its own objects.
      * Does not fire events.
      * 
-     * @param {string[]} edgeIds
+     * @param {IdType[]} edgeIds
      * 
      * @memberOf Network
      */
-    selectEdges(edgeIds: string[]): void;
+    selectEdges(edgeIds: IdType[]): void;
 
     /**
      * Sets the selection.
      * You can also pass only nodes or edges in selection object.
      * 
-     * @param {{ nodes: string[], edges: string[] }} selection
+     * @param {{ nodes: IdType[], edges: IdType[] }} selection
      * @param {ISelectionOptions} [options]
      * 
      * @memberOf Network
      */
-    setSelection(selection: { nodes: string[], edges: string[] }, options?: ISelectionOptions): void;
+    setSelection(selection: { nodes: IdType[], edges: IdType[] }, options?: ISelectionOptions): void;
 
     /**
      * Unselect all objects.
@@ -1143,12 +1218,12 @@ declare namespace __vis {
      * What that means is the view will lock onto that node, if it is moving, the view will also move accordingly.
      * If the view is dragged by the user, the focus is broken. You can supply options to customize the effect.
      * 
-     * @param {string} nodeId
+     * @param {IdType} nodeId
      * @param {IFocusOptions} [options] 
      * 
      * @memberOf Network
      */
-    focus(nodeId: string, options?: IFocusOptions): void;
+    focus(nodeId: IdType, options?: IFocusOptions): void;
 
     /**
      * You can animate or move the camera using the moveTo method.
@@ -1667,78 +1742,6 @@ declare namespace __vis {
     size: number;
     x: number;
     y: number;
-  }
-
-  export interface IEvents {
-    click?(properties?: IProperties): void;
-
-    doubleClick?(properties?: IProperties): void;
-
-    oncontext?(properties?: IProperties): void;
-
-    hold?(properties?: IProperties): void;
-
-    release?(properties?: IProperties): void;
-
-    select?(properties?: IProperties): void;
-
-    selectNode?(properties?: IProperties): void;
-
-    selectEdge?(properties?: IProperties): void;
-
-    deselectNode?(properties?: IProperties): void;
-
-    deselectEdge?(properties?: IProperties): void;
-
-    dragStart?(properties?: IProperties): void;
-
-    dragging?(properties?: IProperties): void;
-
-    dragEnd?(properties?: IProperties): void;
-
-    hoverNode?(node?: string): void;
-
-    blurNode?(node?: string): void;
-
-    hoverEdge?(node?: string): void;
-
-    blurEdge?(node?: string): void;
-
-    zoom?(node?: string): void;
-
-    showPopup?(node?: string): void;
-
-    hidePopup?(node?: string): void;
-
-    startStabilizing?(): void;
-
-    stabilizationProgress?(properties?: {
-        iterations?: number,
-        total?: number,
-    }): void;
-
-    stabilizationIterationsDone?(): void;
-
-    stabilized?(properties?: {
-        iterations?: number,
-    }): void;
-
-    resize?(properties?: {
-        width: number,
-        height: number,
-        oldWidth: number,
-        oldHeight: number,
-    }): void;
-
-    initRedraw?(): void;
-
-    beforeDrawing?(canvasContext?: any): void;
-
-    afterDrawing?(canvasContext?: any): void;
-
-    animationFinished?(): void;
-
-    configChange?(properties?: any): void;
   }
 }
 
