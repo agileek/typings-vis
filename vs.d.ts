@@ -10,8 +10,10 @@ declare namespace __vis {
   type SubgroupType = IdType;
   type DateType = Date | number | string | moment.Moment;
   type HeightWidthType = IdType;
-  type TimelineTimeAxisScaleType = 'millisecond' | 'second' | 'minute' | 'hour' | 'weekday' | 'day' | 'month' | 'year';
-  type TimelineEventPropertiesResultWhatType = 'item' | 'background' | 'axis' | 'group-label' | 'custom-time' | 'current-time';
+  type TimelineTimeAxisScaleType = 'millisecond' | 'second' | 'minute' | 'hour' |
+    'weekday' | 'day' | 'month' | 'year';
+  type TimelineEventPropertiesResultWhatType = 'item' | 'background' | 'axis' |
+    'group-label' | 'custom-time' | 'current-time';
   type TimelineEvents =
     'currentTimeTick' |
     'click' |
@@ -85,7 +87,7 @@ declare namespace __vis {
     step?: number;
   }
 
-  type TimelineOptionsConfigureFunction = (option: string, path: Array<string>) => boolean;
+  type TimelineOptionsConfigureFunction = (option: string, path: string[]) => boolean;
   type TimelineOptionsConfigureType = boolean | TimelineOptionsConfigureFunction;
   type TimelineOptionsDataAttributesType = boolean | string | string[];
   type TimelineOptionsEditableType = boolean | TimelineEditableOption;
@@ -218,8 +220,10 @@ declare namespace __vis {
        * or can be flushed after a configured delay or maximum number of entries. 
        * When queue is true, a queue is created with default options.
        * Options can be specified by providing an object:
-       * delay: number - The queue will be flushed automatically after an inactivity of this delay in milliseconds. Default value is null.
-       * max: number - When the queue exceeds the given maximum number of entries, the queue is flushed automatically. Default value is Infinity.
+       * delay: number - The queue will be flushed automatically after an inactivity of this delay in milliseconds.
+       * Default value is null.
+       * max: number - When the queue exceeds the given maximum number of entries, the queue is flushed automatically.
+       * Default value is Infinity.
        * 
        * @type {(any | boolean)}
        * @memberOf DataSetOptions
@@ -228,24 +232,23 @@ declare namespace __vis {
   }
 
   export class DataSet<T extends DataItem | DataGroup | INode | IEdge> {
-
-    /**
-     * Creates an instance of DataSet.
-     * 
-     * @param {Array<T>} [data] An Array with items.
-     * @param {DataSetOptions} [options] DataSet options.
-     * 
-     * @memberOf DataSet
-     */
-    constructor(data?: Array<T>, options?: DataSetOptions);
-
     /**
      * The number of items in the DataSet.
      * 
      * @type {number}
      * @memberOf DataSet
      */
-    length: number;
+    public length: number;
+
+    /**
+     * Creates an instance of DataSet.
+     * 
+     * @param {T[]} [data] An Array with items.
+     * @param {DataSetOptions} [options] DataSet options.
+     * 
+     * @memberOf DataSet
+     */
+    constructor(data?: T[], options?: DataSetOptions);
 
     /**
      * Add one or multiple items to the DataSet.
@@ -257,7 +260,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    add(data: T | T[], senderId?: IdType): IdType[];
+    public add(data: T | T[], senderId?: IdType): IdType[];
 
     /**
      * Clear all data from the DataSet.
@@ -267,7 +270,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    clear(senderId?: IdType): IdType[];
+    public clear(senderId?: IdType): IdType[];
 
     /**
      * Find all distinct values of a specified field.
@@ -278,7 +281,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    distinct(field: string): any[];
+    public distinct(field: string): any[];
 
     /**
      * Flush queued changes.
@@ -286,7 +289,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    flush(): void;
+    public flush(): void;
 
     /**
      * Execute a callback function for every item in the dataset.
@@ -296,7 +299,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    forEach(callback: (item: T, id: IdType) => void, options?: DataSelectionOptions<T>): void;
+    public forEach(callback: (item: T, id: IdType) => void, options?: DataSelectionOptions<T>): void;
 
     /**
      * Get all items from the DataSet. 
@@ -307,7 +310,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    get(options?: DataSelectionOptions<T>): T[];
+    public get(options?: DataSelectionOptions<T>): T[];
 
     /**
      * Get a single item from the DataSet. 
@@ -319,7 +322,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    get(id: IdType, options?: DataSelectionOptions<T>): T;
+    public get(id: IdType, options?: DataSelectionOptions<T>): T;
 
     /**
      * Get multiple items from the DataSet. 
@@ -331,7 +334,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    get(ids: IdType[], options?: DataSelectionOptions<T>): T[];
+    public get(ids: IdType[], options?: DataSelectionOptions<T>): T[];
 
     /**
      * Get the DataSet itself.
@@ -342,7 +345,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    getDataSet(): DataSet<T>;
+    public getDataSet(): DataSet<T>;
 
     /**
      * Get ids of all items or of a filtered set of items.
@@ -352,7 +355,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    getIds(options?: DataSelectionOptions<T>): IdType[];
+    public getIds(options?: DataSelectionOptions<T>): IdType[];
 
     /**
      * Map every item in the DataSet. 
@@ -363,7 +366,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    map(callback: (item: T, id: IdType) => any, options?: DataSelectionOptions<T>): any[];
+    public map(callback: (item: T, id: IdType) => any, options?: DataSelectionOptions<T>): any[];
 
     /**
      * Find the item with maximum value of specified field.
@@ -373,7 +376,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    max(field: string): T;
+    public max(field: string): T;
 
     /**
      * Find the item with minimum value of specified field.
@@ -383,7 +386,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    min(field: string): T;
+    public min(field: string): T;
 
     /**
      * Subscribe from an event.
@@ -394,7 +397,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    on(event: string, callback: (event: string, properties: any, senderId: IdType) => void): void;
+    public on(event: string, callback: (event: string, properties: any, senderId: IdType) => void): void;
 
     /**
      * Unsubscribe to an event.
@@ -405,7 +408,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    off(event: string, callback: (event: string, properties: any, senderId: IdType) => void): void;
+    public off(event: string, callback: (event: string, properties: any, senderId: IdType) => void): void;
 
     /**
      * Remove one by id or by the items themselves. 
@@ -416,7 +419,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    remove(id: IdType, senderId?: IdType): IdType[];
+    public remove(id: IdType, senderId?: IdType): IdType[];
 
     /**
      * Remove multiple items by id or by the items themselves.
@@ -427,7 +430,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    remove(ids: IdType[], senderId?: IdType): IdType[];
+    public remove(ids: IdType[], senderId?: IdType): IdType[];
 
     /**
      * Set options for the DataSet.
@@ -436,7 +439,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    setOptions(options?: DataSetQueueOptions): void;
+    public setOptions(options?: DataSetQueueOptions): void;
 
     /**
      * Update one or multiple existing items.
@@ -448,7 +451,7 @@ declare namespace __vis {
      * 
      * @memberOf DataSet
      */
-    update(data: T | T[], senderId?: IdType): IdType[];
+    public update(data: T | T[], senderId?: IdType): IdType[];
   }
 
   /**
@@ -516,54 +519,53 @@ declare namespace __vis {
   }
 
   export class DataView<T extends DataItem | DataGroup> {
-    constructor(items: Array<T>);
-
-    length: number;
+    public length: number;
+    constructor(items: T[]);
   }
 
-  type DataItemCollectionType = Array<DataItem> | DataSet<DataItem> | DataView<DataItem>;
-  type DataGroupCollectionType = Array<DataGroup> | DataSet<DataGroup> | DataView<DataGroup>;
+  type DataItemCollectionType = DataItem[] | DataSet<DataItem> | DataView<DataItem>;
+  type DataGroupCollectionType = DataGroup[] | DataSet<DataGroup> | DataView<DataGroup>;
 
   export class Timeline {
     constructor(
       container: HTMLElement,
       items: DataItemCollectionType,
       groups: DataGroupCollectionType,
-      options?: TimelineOptions
+      options?: TimelineOptions,
     );
     constructor(
       container: HTMLElement,
       items: DataItemCollectionType,
-      options?: TimelineOptions
+      options?: TimelineOptions,
     );
 
-    addCustomTime(time: DateType, id?: IdType): IdType;
-    destroy(): void;
-    fit(options?: TimelineFitOptions): void;
-    focus(id: IdType, options?: TimelineFitOptions): void;
-    focus(ids: Array<IdType>, options?: TimelineFitOptions): void;
-    getCurrentTime(): Date;
-    getCustomTime(id?: IdType): Date;
-    getEventProperties(event: Event): TimelineEventPropertiesResult;
-    getItemRange(): any; // TODO
-    getSelection(): Array<IdType>;
-    getVisibleItems(): Array<IdType>;
-    getWindow(): {start: Date, end: Date};
-    moveTo(time: DateType, options?: TimelineFitOptions): void;
-    on(event: TimelineEvents, callback: Function): void;
-    off(event: TimelineEvents, callback: Function): void;
-    redraw(): void;
-    removeCustomTime(id: IdType): void;
-    setCurrentTime(time: DateType): void;
-    setCustomTime(time: DateType, id?: IdType): void;
-    setCustomTimeTitle(title: string, id?: IdType): void;
-    setData(data: { groups?: DataGroupCollectionType; items?: DataItemCollectionType }): void;
-    setGroups(groups?: DataGroupCollectionType): void;
-    setItems(items: DataItemCollectionType): void;
-    setOptions(options: TimelineOptions): void;
-    setSelection(id: IdType): void;
-    setSelection(ids: Array<IdType>): void;
-    setWindow(start: DateType, end: DateType, options?: TimelineFitOptions): void;
+    public addCustomTime(time: DateType, id?: IdType): IdType;
+    public destroy(): void;
+    public fit(options?: TimelineFitOptions): void;
+    public focus(id: IdType, options?: TimelineFitOptions): void;
+    public focus(ids: IdType[], options?: TimelineFitOptions): void;
+    public getCurrentTime(): Date;
+    public getCustomTime(id?: IdType): Date;
+    public getEventProperties(event: Event): TimelineEventPropertiesResult;
+    public getItemRange(): any; // TODO
+    public getSelection(): IdType[];
+    public getVisibleItems(): IdType[];
+    public getWindow(): {start: Date, end: Date};
+    public moveTo(time: DateType, options?: TimelineFitOptions): void;
+    public on(event: TimelineEvents, callback: Function): void;
+    public off(event: TimelineEvents, callback: Function): void;
+    public redraw(): void;
+    public removeCustomTime(id: IdType): void;
+    public setCurrentTime(time: DateType): void;
+    public setCustomTime(time: DateType, id?: IdType): void;
+    public setCustomTimeTitle(title: string, id?: IdType): void;
+    public setData(data: { groups?: DataGroupCollectionType; items?: DataItemCollectionType }): void;
+    public setGroups(groups?: DataGroupCollectionType): void;
+    public setItems(items: DataItemCollectionType): void;
+    public setOptions(options: TimelineOptions): void;
+    public setSelection(id: IdType): void;
+    public setSelection(ids: IdType[]): void;
+    public setWindow(start: DateType, end: DateType, options?: TimelineFitOptions): void;
   }
 
   export interface ITimelineStatic {
@@ -677,7 +679,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    destroy(): void;
+    public destroy(): void;
 
     /**
      * Override all the data in the network.
@@ -689,7 +691,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    setData(data: IData): void;
+    public setData(data: IData): void;
 
     /**
      * Set the options.
@@ -700,7 +702,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    setOptions(options: IOptions): void;
+    public setOptions(options: IOptions): void;
 
     /**
      * Set an event listener.
@@ -711,7 +713,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    on(eventName: NetworkEvents, callback: (params?: any) => void): void;
+    public on(eventName: NetworkEvents, callback: (params?: any) => void): void;
 
     /**
      * Remove an event listener.
@@ -723,7 +725,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    off(eventName: NetworkEvents, callback?: (params?: any) => void): void;
+    public off(eventName: NetworkEvents, callback?: (params?: any) => void): void;
 
     /**
      * Set an event listener only once.
@@ -735,7 +737,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    once(eventName: NetworkEvents, callback: (params?: any) => void): void;
+    public once(eventName: NetworkEvents, callback: (params?: any) => void): void;
 
     /**
      * This function converts canvas coordinates to coordinates on the DOM.
@@ -747,7 +749,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    canvasToDOM(position: IPosition): IPosition;
+    public canvasToDOM(position: IPosition): IPosition;
 
     /**
      * This function converts DOM coordinates to coordinates on the canvas.
@@ -759,14 +761,14 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    DOMtoCanvas(position: IPosition): IPosition;
+    public DOMtoCanvas(position: IPosition): IPosition;
 
     /**
      * Redraw the network.
      * 
      * @memberOf Network
      */
-    redraw(): void;
+    public redraw(): void;
 
     /**
      * Set the size of the canvas.
@@ -777,7 +779,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    setSize(width: string, height: string): void;
+    public setSize(width: string, height: string): void;
 
     /**
      * The joinCondition function is presented with all nodes.
@@ -786,7 +788,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    cluster(options?: IClusterOptions): void;
+    public cluster(options?: IClusterOptions): void;
 
     /**
      * 	This method looks at the provided node and makes a cluster of it and all it's connected nodes.
@@ -799,7 +801,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    clusterByConnection(nodeId: string, options?: IClusterOptions): void;
+    public clusterByConnection(nodeId: string, options?: IClusterOptions): void;
 
     /**
      * This method checks all nodes in the network and those with a equal or higher
@@ -814,7 +816,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    clusterByHubsize(hubsize?: number, options?: IClusterOptions): void;
+    public clusterByHubsize(hubsize?: number, options?: IClusterOptions): void;
 
     /**
      * This method will cluster all nodes with 1 edge with their respective connected node.
@@ -823,7 +825,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    clusterOutliers(options?: IClusterOptions): void;
+    public clusterOutliers(options?: IClusterOptions): void;
 
     /**
      * Nodes can be in clusters.
@@ -841,7 +843,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    findNode(nodeId: IdType): IdType[];
+    public findNode(nodeId: IdType): IdType[];
 
     /**
      * Similar to findNode in that it returns all the edge ids that were
@@ -850,7 +852,7 @@ declare namespace __vis {
      * @param {IdType} baseEdgeId the base edge id
      * @returns {IdType[]} an array of edgeIds
      */
-    getClusteredEdges(baseEdgeId: IdType): IdType[];
+    public getClusteredEdges(baseEdgeId: IdType): IdType[];
 
     /**
      * When a clusteredEdgeId is available, this method will return the original
@@ -861,7 +863,7 @@ declare namespace __vis {
      * @param {IdType} clusteredEdgeId 
      * @returns {IdType} 
      */
-    getBaseEdge(clusteredEdgeId: IdType): IdType;
+    public getBaseEdge(clusteredEdgeId: IdType): IdType;
 
     /**
      * Visible edges between clustered nodes are not the same edge as the ones provided
@@ -873,13 +875,13 @@ declare namespace __vis {
      * @param {IdType} startEdgeId
      * @param {IEdgeOptions} [options]
      */
-    updateEdge(startEdgeId: IdType, options?: IEdgeOptions): void;
+    public updateEdge(startEdgeId: IdType, options?: IEdgeOptions): void;
 
     /**
      * Clustered Nodes when created are not contained in the original data.nodes 
      * passed on network creation. This method updates the cluster node.
      */
-    updateClusteredNode(clusteredNodeId: IdType, options?: INodeOptions): void;
+    public updateClusteredNode(clusteredNodeId: IdType, options?: INodeOptions): void;
 
     /**
      * Returns true if the node whose ID has been supplied is a cluster.
@@ -889,7 +891,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    isCluster(nodeId: IdType): boolean;
+    public isCluster(nodeId: IdType): boolean;
 
     /**
      * Returns an array of all nodeIds of the nodes that
@@ -900,7 +902,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getNodesInCluster(clusterNodeId: IdType): IdType[];
+    public getNodesInCluster(clusterNodeId: IdType): IdType[];
 
     /**
      * Opens the cluster, releases the contained nodes and edges,
@@ -914,7 +916,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    openCluster(nodeId: IdType, options?: IOpenClusterOptions): void;
+    public openCluster(nodeId: IdType, options?: IOpenClusterOptions): void;
 
     /**
      * If you like the layout of your network
@@ -925,7 +927,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getSeed(): number;
+    public getSeed(): number;
 
     /**
      * 	Programatically enable the edit mode.
@@ -933,7 +935,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    enableEditMode(): void;
+    public enableEditMode(): void;
 
     /**
      * Programatically disable the edit mode.
@@ -941,7 +943,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    disableEditMode(): void;
+    public disableEditMode(): void;
 
     /**
      * 	Go into addNode mode. Having edit mode or manipulation enabled is not required.
@@ -951,7 +953,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    addNodeMode(): void;
+    public addNodeMode(): void;
 
     /**
      * Edit the selected node.
@@ -959,7 +961,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    editNode(): void;
+    public editNode(): void;
 
     /**
      * Go into addEdge mode.
@@ -967,7 +969,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    addEdgeMode(): void;
+    public addEdgeMode(): void;
 
     /**
      * Go into editEdge mode.
@@ -975,7 +977,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    editEdgeMode(): void;
+    public editEdgeMode(): void;
 
     /**
      * Delete selected.
@@ -983,7 +985,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    deleteSelected(): void;
+    public deleteSelected(): void;
 
     /**
      * Returns the x y positions in canvas space of the nodes with the supplied nodeIds as an object.
@@ -997,9 +999,9 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getPositions(nodeIds: IdType[]): {[nodeId: string]: IPosition};
-    getPositions(nodeId: IdType): IPosition;
-    getPositions(): {[nodeId: string]: IPosition};
+    public getPositions(nodeIds: IdType[]): {[nodeId: string]: IPosition};
+    public getPositions(nodeId: IdType): IPosition;
+    public getPositions(): {[nodeId: string]: IPosition};
 
     /**
      * 	When using the vis.DataSet to load your nodes into the network,
@@ -1017,7 +1019,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    storePositions(): void;
+    public storePositions(): void;
 
     /**
      * You can use this to programatically move a node.
@@ -1029,7 +1031,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    moveNode(nodeId: IdType, x: number, y: number): void;
+    public moveNode(nodeId: IdType, x: number, y: number): void;
 
     /**
      * Returns a bounding box for the node including label.
@@ -1039,7 +1041,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getBoundingBox(nodeId: IdType): IBoundingBox;
+    public getBoundingBox(nodeId: IdType): IBoundingBox;
 
     /**
      * Returns an array of nodeIds of the all the nodes that are directly connected to this node.
@@ -1051,7 +1053,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getConnectedNodes(nodeOrEdgeId: IdType): IdType[] | {fromId: IdType, toId: IdType}[];
+    public getConnectedNodes(nodeOrEdgeId: IdType): IdType[] | Array<{fromId: IdType, toId: IdType}>;
 
     /**
      * Returns an array of edgeIds of the edges connected to this node.
@@ -1061,7 +1063,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getConnectedEdges(nodeId: IdType): IdType[];
+    public getConnectedEdges(nodeId: IdType): IdType[];
 
     /**
      * Start the physics simulation.
@@ -1070,7 +1072,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    startSimulation(): void;
+    public startSimulation(): void;
 
     /**
      * This stops the physics simulation and triggers a stabilized event.
@@ -1079,7 +1081,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    stopSimulation(): void;
+    public stopSimulation(): void;
 
     /**
      * You can manually call stabilize at any time.
@@ -1090,7 +1092,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    stabilize(iterations?: number): void;
+    public stabilize(iterations?: number): void;
 
     /**
      * Returns an object with selected nodes and edges ids.
@@ -1099,7 +1101,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getSelection(): { nodes: IdType[], edges: IdType[] };
+    public getSelection(): { nodes: IdType[], edges: IdType[] };
 
     /**
      * Returns an array of selected node ids like so:
@@ -1109,7 +1111,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getSelectedNodes(): IdType[];
+    public getSelectedNodes(): IdType[];
 
     /**
      * Returns an array of selected edge ids like so:
@@ -1119,7 +1121,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getSelectedEdges(): IdType[];
+    public getSelectedEdges(): IdType[];
 
     /**
      * Returns a nodeId or undefined.
@@ -1130,7 +1132,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getNodeAt(position: IPosition): IdType;
+    public getNodeAt(position: IPosition): IdType;
 
     /**
      * Returns a edgeId or undefined.
@@ -1141,7 +1143,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getEdgeAt(position: IPosition): IdType;
+    public getEdgeAt(position: IPosition): IdType;
 
     /**
      * Selects the nodes corresponding to the id's in the input array.
@@ -1153,7 +1155,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    selectNodes(nodeIds: IdType[], highlightEdges?: boolean): void;
+    public selectNodes(nodeIds: IdType[], highlightEdges?: boolean): void;
 
     /**
      * Selects the edges corresponding to the id's in the input array.
@@ -1164,7 +1166,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    selectEdges(edgeIds: IdType[]): void;
+    public selectEdges(edgeIds: IdType[]): void;
 
     /**
      * Sets the selection.
@@ -1175,7 +1177,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    setSelection(selection: { nodes: IdType[], edges: IdType[] }, options?: ISelectionOptions): void;
+    public setSelection(selection: { nodes: IdType[], edges: IdType[] }, options?: ISelectionOptions): void;
 
     /**
      * Unselect all objects.
@@ -1183,7 +1185,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    unselectAll(): void;
+    public unselectAll(): void;
 
     /**
      * Returns the current scale of the network.
@@ -1193,7 +1195,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getScale(): number;
+    public getScale(): number;
 
     /**
      * Returns the current central focus point of the view in the form: { x: {Number}, y: {Number} }
@@ -1202,7 +1204,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getViewPosition(): IPosition;
+    public getViewPosition(): IPosition;
 
     /**
      * Zooms out so all nodes fit on the canvas. 
@@ -1211,7 +1213,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    fit(options?: IFitOptions): void;
+    public fit(options?: IFitOptions): void;
 
     /**
      * You can focus on a node with this function.
@@ -1223,7 +1225,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    focus(nodeId: IdType, options?: IFocusOptions): void;
+    public focus(nodeId: IdType, options?: IFocusOptions): void;
 
     /**
      * You can animate or move the camera using the moveTo method.
@@ -1232,14 +1234,14 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    moveTo(options: IMoveToOptions): void;
+    public moveTo(options: IMoveToOptions): void;
 
     /**
      * Programatically release the focussed node.
      * 
      * @memberOf Network
      */
-    releaseNode(): void;
+    public releaseNode(): void;
 
     /**
      * If you use the configurator, you can call this method to get an options object that contains
@@ -1249,7 +1251,7 @@ declare namespace __vis {
      * 
      * @memberOf Network
      */
-    getOptionsFromConfigurator(): any;
+    public getOptionsFromConfigurator(): any;
   }
 
   /**
@@ -1297,12 +1299,12 @@ declare namespace __vis {
     offset?: IPosition;
 
     /**
-    * For animation you can either use a Boolean to use it with the default options or
-    * disable it or you can define the duration (in milliseconds) and easing function manually.
-    * 
-    * @type {(IAnimationOptions | boolean)}
-    * @memberOf IFitOptions
-    */
+     * For animation you can either use a Boolean to use it with the default options or
+     * disable it or you can define the duration (in milliseconds) and easing function manually.
+     * 
+     * @type {(IAnimationOptions | boolean)}
+     * @memberOf IFitOptions
+     */
     animation?: IAnimationOptions | boolean;
   }
 
@@ -1410,7 +1412,8 @@ declare namespace __vis {
        * The cluster module loops over all nodes that are selected to be in the cluster
        * and calls this function with their data as argument. If this function returns true,
        * this node will be added to the cluster. You have access to all options (including the default)
-       * as well as any custom fields you may have added to the node to determine whether or not to include it in the cluster.
+       * as well as any custom fields you may have added to the node to determine
+       * whether or not to include it in the cluster.
        * 
        * @memberOf IClusterOptions
        */
@@ -1477,7 +1480,9 @@ declare namespace __vis {
        * 
        * @memberOf IOpenClusterOptions
        */
-      releaseFunction: (clusterPosition: IPosition, containedNodesPositions: {[nodeId: string]: IPosition}) => {[nodeId: string]: IPosition};
+      releaseFunction: (
+          clusterPosition: IPosition,
+          containedNodesPositions: {[nodeId: string]: IPosition}) => {[nodeId: string]: IPosition};
   }
 
   export interface IPosition {
@@ -1577,7 +1582,7 @@ declare namespace __vis {
         hover?: string | {
             border?: string,
             background?: string,
-        }
+        },
     };
 
     fixed?: boolean | {
@@ -1631,7 +1636,7 @@ declare namespace __vis {
         borderRadius: number,     // only for box shape
         interpolation: boolean,  // only for image and circularImage shapes
         useImageSize: boolean,  // only for image and circularImage shapes
-        useBorderWithImage: boolean  // only for image shape
+        useBorderWithImage: boolean,  // only for image shape
     };
 
     size?: number;
@@ -1658,7 +1663,7 @@ declare namespace __vis {
         from: boolean | {
             enabled?: boolean,
             scaleFactor?: number,
-        }
+        },
     };
 
     arrowStrikethrough?: boolean;
@@ -1731,7 +1736,7 @@ declare namespace __vis {
         min?: number,
         max?: number,
         maxVisible?: number,
-        drawThreshold?: number
+        drawThreshold?: number,
     };
     customScalingFunction?(min?: number, max?: number, total?: number, value?: number): number;
   }
