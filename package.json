@@ -8,10 +8,12 @@
     "url": "git+https://github.com/agileek/typings-vis.git"
   },
   "scripts": {
-    "test": "node_modules/.bin/tsc vs.d.ts && node_modules/.bin/tslint vs.d.ts"
+    "lint": "node_modules/.bin/tslint vs.d.ts -c tslint.json",
+    "compile": "node_modules/.bin/tsc vs.d.ts",
+    "test": "npm run compile && npm run lint"
   },
   "devDependencies": {
-    "tslint": "^3.14.0",
-    "typescript": "^1.8.10"
+    "tslint": "^4.0.2",
+    "typescript": "^2.0.10"
   }
 }

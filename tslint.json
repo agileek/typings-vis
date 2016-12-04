@@ -1,0 +1,9 @@
+{
+  "extends": "tslint:latest",
+  "rules": {
+    "quotemark": false,
+    "no-namespace": false,
+    "max-classes-per-file": false,
+    "interface-name": false
+  }
+}
